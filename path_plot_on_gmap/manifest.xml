@@ -1,0 +1,19 @@
+<package>
+  <description brief="path_plot_on_gmap">
+
+     path_plot_on_gmap
+
+  </description>
+  <author>sud</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/path_plot_on_gmap</url>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="std_msgs"/>
+  <depend package="visualization_msgs"/>
+  <depend package="pcl_ros"/>
+
+</package>
+
+

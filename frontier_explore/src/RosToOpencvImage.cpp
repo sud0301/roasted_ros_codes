@@ -1,0 +1,88 @@
+/* 
+
+   Andy McEvoy
+   michael.mcevoy@colorado.edu
+
+   12 - June - 2013
+
+   Converts a ROS image stream into an OpenCV image stream
+
+*/
+
+#include <ros/ros.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+namespace enc = sensor_msgs::image_encodings;
+
+static const char WINDOW[] = "OpenCV Image";
+
+int global_min_threshold=50;
+int global_squareness_ratio=20;
+
+void update_global_min_threshold(int,void*) {
+  //do nothing
+}
+
+void update_global_squareness_ratio(int,void*) {
+  //do nothing
+}
+
+class ImageConverter
+{
+  ros::NodeHandle nh_;
+  image_transport::ImageTransport it_;
+  image_transport::Subscriber image_sub_;
+ 
+public:
+  ImageConverter(char* ros_image_stream)
+    : it_(nh_)
+  {
+    image_sub_ = it_.subscribe(ros_image_stream, 1, &ImageConverter::imageCb, this);
+    cv::namedWindow(WINDOW);
+  }
+
+  ~ImageConverter()
+  {
+    cv::destroyWindow(WINDOW);
+  }
+
+  	void imageCb(const sensor_msgs::ImageConstPtr& msg)
+  	{
+		cv_bridge::CvImagePtr cv_ptr;
+    	try
+      	{
+    		cv_ptr = cv_bridge::toCvCopy(msg, enc::BGR8);
+      	}
+    	catch (cv_bridge::Exception& e)
+      	{
+    		ROS_ERROR("cv_bridge exception: %s", e.what());
+    		return;
+      	}
+
+    	cv::Mat filtered_image;
+    	cv::cvtColor(cv_ptr->image,filtered_image,CV_BGR2GRAY);
+    	cv::imwrite("hi.jpg",filtered_image);
+  
+  	}
+};
+
+int main(int argc, char** argv)
+{
+  	if (argc==1) 
+	{
+    	ros::init(argc, argv, "correll_image_converter");
+    	ImageConverter ic("/camera/depth/image_raw");
+    	ros::spin();
+		std::cout<<"hi";
+    	return 0;
+  	} 
+	else 
+	{
+	    std::cout<<"ERROR:\tusage - RosToOpencvImage <ros_image_topic>"<<std::endl;
+    	return 1;
+  	}
+}

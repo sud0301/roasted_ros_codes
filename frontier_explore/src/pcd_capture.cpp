@@ -1,0 +1,81 @@
+#include <iostream>
+#include <string.h>
+#include <fstream>
+#include <sstream>
+
+#include <pcl/point_types.h>
+#include <pcl_ros/point_cloud.h>
+#include <ros/ros.h>
+#include <boost/foreach.hpp>
+#include <sensor_msgs/PointCloud2.h>
+
+#include <pcl/common/common.h>
+#include <pcl/common/transforms.h>
+#include <pcl/console/parse.h>
+#include <pcl/console/print.h>
+
+#include <flann/flann.h>
+#include <flann/io/hdf5.h>
+#include <boost/filesystem.hpp>
+
+#include <pcl/io/pcd_io.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/passthrough.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/features/vfh.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl/filters/project_inliers.h>
+#include <pcl/surface/convex_hull.h>
+#include <pcl/segmentation/extract_polygonal_prism_data.h>
+#include <pcl/segmentation/extract_clusters.h>
+#include <pcl/filters/statistical_outlier_removal.h>
+
+using namespace std;
+
+typedef pcl::PointXYZRGB Point;
+typedef pcl::PointCloud<pcl::PointXYZRGB> cloudxyz;
+typedef cloudxyz::Ptr cloudptr;
+
+cloudxyz PC;
+string object_ID;
+int k=0;
+
+void writeCloudPCD(cloudptr &cloud, string S)
+{	pcl::io::savePCDFileASCII(S, *cloud);	}
+
+void callback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+	cloudptr cloud_in (new cloudxyz());
+	pcl::fromROSMsg(*msg, *cloud_in);
+	
+	stringstream num;
+	num<<k;
+	string path = "/home/sud/fuerte_workspace/sandbox/frontier_explore/bin/bottle/"+object_ID+"/"+object_ID+"_orientation"+num.str()+".pcd";
+	writeCloudPCD(cloud_in, path);
+	//cout<<k%30<<endl;
+
+	if ((k%30)==0)	
+	cout<<"Done writng the object cloud"<<endl;		
+	
+	k++;
+
+}	
+
+int main(int argc, char **argv)
+{
+	ros::init(argc, argv, "obj_segment");
+	if(argc<2)
+	{
+		cout<<"Enter the ID of the object"<<endl;
+		exit(0);
+	}
+	object_ID =argv[1];	
+	ros::NodeHandle nh;
+	ros::Subscriber sub = nh.subscribe("camera/depth_registered/points", 1, callback);
+	
+	ros::spin();
+}

@@ -1,0 +1,23 @@
+<package>
+  <description brief="frontier_explore">
+
+     frontier_explore
+
+  </description>
+  <author>sud</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/frontier_explore</url>
+  <depend package="opencv2"/>
+  <depend package="std_msgs"/>
+  <depend package="pcl_ros"/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="nav_msgs"/>
+  <depend package="actionlib"/>
+  <depend package="move_base_msgs"/>
+  <depend package="cv_bridge"/>
+
+</package>
+
+
