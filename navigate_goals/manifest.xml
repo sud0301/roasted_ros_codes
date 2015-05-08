@@ -1,0 +1,21 @@
+<package>
+  <description brief="navigate_goals">
+
+     navigate_goals
+
+  </description>
+  <author>sud</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/navigate_goals</url>
+  <depend package="std_msgs"/>
+  <depend package="pcl_ros"/>
+  <depend package="opencv2"/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="move_base_msgs"/>
+  <depend package="actionlib"/>
+  <depend package="nav_msgs"/>
+</package>
+
+
